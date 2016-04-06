@@ -36,6 +36,7 @@ class Person(models.Model):
 
 #Phone, Email, Address classes.  Apply to all Entities.
 #Helper class field to choose type of phone number
+'''
 class PhoneTypeField(models.Field):
 	description = 'Choose Work, Home, or Cell'
 
@@ -65,26 +66,44 @@ class StateField(models.Field):
 		]
 
 		super(StateField, self).__init__(*args, **kwargs)
-
+'''
 
 class Phone(models.Model):
+	PHONE_CHOICES = [
+			(1, 'Work'),
+			(2, 'Home'),
+			(3, 'Cell')
+		]
+
+
 	phone_no = models.CharField(
 		max_length=14,
 		validators=[RegexValidator(regex='^(\d{1}-)?(\d{3}-\d{3}-\d{4})$',
 		message='Invalid phone numer')]
 		)
+
 	person = models.ForeignKey(Person, on_delete = models.CASCADE)
-	phone_type = PhoneTypeField()
+
+	phone_type = models.IntegerField(choices=PHONE_CHOICES,
+		default=1,
+		)
+
 	contact_name = models.CharField(max_length=100, null=True)
 
 class CompanyPhone(models.Model):
+	PHONE_CHOICES = [
+			(1, 'Work'),
+			(2, 'Home'),
+			(3, 'Cell')
+		]
+
 	phone_no = models.CharField(
 		max_length=14,
 		validators=[RegexValidator(regex='^(\d{1}-)?(\d{3}-\d{3}-\d{4})$',
 		message='Invalid phone numer')]
 		)
 	company = models.ForeignKey(Company, on_delete = models.CASCADE)
-	phone_type = PhoneTypeField()
+	phone_type = models.IntegerField(choices=PHONE_CHOICES, default=1)
 	contact_name = models.CharField(max_length=100, null=True)
 
 class Email(models.Model):
@@ -100,20 +119,48 @@ class CompanyEmail(models.Model):
 		max_length=200,
 		validators=[EmailValidator()]
 		)
+
+
 class Address(models.Model):
+	STATES = [
+			("AK","Alaska"),("AL","Alabama"),("AR","Arkansas"),("AZ","Arizona"),("CA","California"),
+			("CO","Colorado"),("CT","Connecticut"),("DE","Delaware"),("FL","Florida"),("GA","Georgia"),
+			("HI","Hawaii"),("IA","Iowa"),("ID","Idaho"),("IL","Illinois"),("IN","Indiana"),
+			("KS","Kansas"),("KY","Kentucky"),("LA","Louisiana"),("MA","Massachusetts"),("MD","Maryland"),
+			("ME","Maine"),("MI","Michigan"),("MN","Minnesota"),("MO","Missouri"),("MS","Mississippi"),
+			("MT","Montana"),("NC","North Carolina"),("ND","North Dakota"),("NE","Nebraska"),("NH","New Hampshire"),
+			("NJ","New Jersey"),("NM","New Mexico"),("NV","Nevada"),("NY","New York"),("OH","Ohio"),("OK","Oklahoma"),
+			("OR","Oregon"),("PA","Pennsylvania"),("RI","Rhode Island"),("SC","South Carolina"),("SD","South Dakota"),
+			("TN","Tennessee"),("TX","Texas"),("UT","Utah"),("VA","Virginia"),("VT","Vermont"),("WA","Washington"),
+			("WI","Wisconsin"),("WV","West Virginia"),("WY","Wyoming"),("DC","District of Columbia"),
+		]
+
 	person = models.ForeignKey(Person, on_delete = models.CASCADE)
 
 	street_1 = models.CharField(max_length=200)
 	street_2 = models.CharField(max_length=100)
 	city = models.CharField(max_length=100)
-	state = StateField()
+	state = models.CharField(max_length=2, choices=STATES)
 	zip_code = models.CharField(max_length=16)
 
 class CompanyAddress(models.Model):
+	STATES = [
+			("AK","Alaska"),("AL","Alabama"),("AR","Arkansas"),("AZ","Arizona"),("CA","California"),
+			("CO","Colorado"),("CT","Connecticut"),("DE","Delaware"),("FL","Florida"),("GA","Georgia"),
+			("HI","Hawaii"),("IA","Iowa"),("ID","Idaho"),("IL","Illinois"),("IN","Indiana"),
+			("KS","Kansas"),("KY","Kentucky"),("LA","Louisiana"),("MA","Massachusetts"),("MD","Maryland"),
+			("ME","Maine"),("MI","Michigan"),("MN","Minnesota"),("MO","Missouri"),("MS","Mississippi"),
+			("MT","Montana"),("NC","North Carolina"),("ND","North Dakota"),("NE","Nebraska"),("NH","New Hampshire"),
+			("NJ","New Jersey"),("NM","New Mexico"),("NV","Nevada"),("NY","New York"),("OH","Ohio"),("OK","Oklahoma"),
+			("OR","Oregon"),("PA","Pennsylvania"),("RI","Rhode Island"),("SC","South Carolina"),("SD","South Dakota"),
+			("TN","Tennessee"),("TX","Texas"),("UT","Utah"),("VA","Virginia"),("VT","Vermont"),("WA","Washington"),
+			("WI","Wisconsin"),("WV","West Virginia"),("WY","Wyoming"),("DC","District of Columbia"),
+		]
+
 	company = models.ForeignKey(Company, on_delete = models.CASCADE)
 
 	street_1 = models.CharField(max_length=200)
 	street_2 = models.CharField(max_length=100)
 	city = models.CharField(max_length=100)
-	state = StateField()
+	state = models.CharField(max_length=2, choices=STATES)
 	zip_code = models.CharField(max_length=16)
