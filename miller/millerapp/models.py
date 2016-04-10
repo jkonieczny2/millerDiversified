@@ -22,6 +22,9 @@ class Company(models.Model):
 	company_name = models.CharField(max_length=200)
 	company_website = models.URLField(max_length=200, null=True)
 
+	def __str__(self):
+		return self.company_name
+
 #Model for a contractor/contact/manager, all of which are Entity
 class Person(models.Model):
 	first_name = models.CharField(max_length=200)
@@ -32,7 +35,11 @@ class Person(models.Model):
 		blank=True,
 		null=True
 		) #on_delete=models.CASCADE
-	title = models.CharField(max_length=100, default='employee')
+	title = models.CharField(max_length=100, null=True, blank=True)
+
+	def __str__(self):
+		fullname = "%s %s"%(self.first_name, self.last_name)
+		return fullname
 
 #Phone, Email, Address classes.  Apply to all Entities.
 #Helper class field to choose type of phone number
@@ -72,7 +79,8 @@ class Phone(models.Model):
 	PHONE_CHOICES = [
 			(1, 'Work'),
 			(2, 'Home'),
-			(3, 'Cell')
+			(3, 'Cell'),
+			(4, 'Fax')
 		]
 
 
@@ -88,13 +96,15 @@ class Phone(models.Model):
 		default=1,
 		)
 
-	contact_name = models.CharField(max_length=100, null=True)
+	def __str__(self):
+		return self.phone_no
 
 class CompanyPhone(models.Model):
 	PHONE_CHOICES = [
 			(1, 'Work'),
 			(2, 'Home'),
-			(3, 'Cell')
+			(3, 'Cell'),
+			(4, 'Fax')
 		]
 
 	phone_no = models.CharField(
@@ -104,7 +114,10 @@ class CompanyPhone(models.Model):
 		)
 	company = models.ForeignKey(Company, on_delete = models.CASCADE)
 	phone_type = models.IntegerField(choices=PHONE_CHOICES, default=1)
-	contact_name = models.CharField(max_length=100, null=True)
+	contact_name = models.CharField(max_length=100, null=True, blank=True)
+
+	def __str__(self):
+		return self.phone_no
 
 class Email(models.Model):
 	person = models.ForeignKey(Person, on_delete=models.CASCADE)
@@ -113,12 +126,19 @@ class Email(models.Model):
 		validators=[EmailValidator()]
 		)
 
+	def __str__(self):
+		return self.email
+
 class CompanyEmail(models.Model):
 	company = models.ForeignKey(Company, on_delete=models.CASCADE)
 	email = models.CharField(
 		max_length=200,
 		validators=[EmailValidator()]
 		)
+	contact_name = models.CharField(max_length = 50, null=True, blank=True)
+
+	def __str__(self):
+		return self.email
 
 
 class Address(models.Model):
@@ -138,10 +158,14 @@ class Address(models.Model):
 	person = models.ForeignKey(Person, on_delete = models.CASCADE)
 
 	street_1 = models.CharField(max_length=200)
-	street_2 = models.CharField(max_length=100)
+	street_2 = models.CharField(max_length=100, null=True, blank=True)
 	city = models.CharField(max_length=100)
 	state = models.CharField(max_length=2, choices=STATES)
 	zip_code = models.CharField(max_length=16)
+
+	def __str__(self):
+		full_address = "%s %s"%(self.street_1, self.street_2)
+		return full_address
 
 class CompanyAddress(models.Model):
 	STATES = [
@@ -160,7 +184,14 @@ class CompanyAddress(models.Model):
 	company = models.ForeignKey(Company, on_delete = models.CASCADE)
 
 	street_1 = models.CharField(max_length=200)
-	street_2 = models.CharField(max_length=100)
+	street_2 = models.CharField(max_length=100, null=True, blank=True)
 	city = models.CharField(max_length=100)
 	state = models.CharField(max_length=2, choices=STATES)
 	zip_code = models.CharField(max_length=16)
+
+	def __str__(self):
+		full_address = "%s %s"%(self.street_1, self.street_2)
+		return full_address
+
+#Model for s
+
