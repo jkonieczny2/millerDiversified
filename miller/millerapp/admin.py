@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Person, Address, Email, Phone
 from .models import Company, CompanyAddress, CompanyPhone, CompanyEmail
+from .models import Project, ProjectAddress, ProjectManagers
 
 #Tee up inlines for the Person admin page
 class PhoneInline(admin.TabularInline):
@@ -48,7 +49,23 @@ class CompanyAdmin(admin.ModelAdmin):
 		CompanyEmailInline,
 	]
 
+#Tee up inlines for Project
+class ProjectAddressInline(admin.StackedInline):
+	model = ProjectAddress
+	extra = 0
+
+class ProjectManagersInline(admin.TabularInline):
+	model = ProjectManagers
+	extra = 0
+
+class ProjectAdmin(admin.ModelAdmin):
+
+	inlines = [
+		ProjectAddressInline,
+		ProjectManagersInline,
+	]
 
 # Register your models here.
 admin.site.register(Person, PersonAdmin)
 admin.site.register(Company, CompanyAdmin)
+admin.site.register(Project, ProjectAdmin)
