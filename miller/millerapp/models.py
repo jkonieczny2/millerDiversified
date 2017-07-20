@@ -3,7 +3,8 @@ from django.db.models import signals
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator, EmailValidator
 from django.dispatch import receiver
-
+from neomodel import (config, StructuredNode, StringProperty, IntegerProperty,
+    UniqueIdProperty, RelationshipTo, RelationshipFrom)
 
 #CREATE DATA MODELS HERE
 

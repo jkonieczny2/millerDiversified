@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+from neomodel import config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -87,13 +88,8 @@ DATABASES = {
     }
 }
 
-NEO4J_DATABASES = {
-    'default': {
-        'HOST':'localhost' ,
-        'PORT':7474 ,
-        'ENDPOINT':'/db/data' ,
-    }
-}
+# Set Neo4J URL
+config.DATABASE_URL = 'bolt://neo4j:neo4j@localhost:7687'
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
