@@ -1,4 +1,4 @@
-#pdftotext in_pdf, out_text, -layout -f 2
+#pdftotext in_pdf, out_text, -layout -f 2gi
 
 import re
 import os
