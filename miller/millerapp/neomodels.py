@@ -1,6 +1,6 @@
 from neomodel import (config, StructuredNode, StringProperty, IntegerProperty,
-    UniqueIdProperty, RelationshipTo, RelationshipFrom , DateProperty , StructuredRel)
-from neomodel.cardinality import OneOrMore , ZeroOrMore
+    UniqueIdProperty, RelationshipTo, RelationshipFrom , DateProperty , StructuredRel , DateTimeProperty)
+from neomodel.cardinality import OneOrMore , ZeroOrMore , One
 
 class TestNode(StructuredNode):
 	code = StringProperty()
@@ -12,7 +12,7 @@ class Structure(StructuredNode):
 	
 	#Cannot be unique in case users want to share models with same name
 	name = StringProperty(index = True, required = True)
-	created_date = DateProperty(required = True , default_now = True)
+	created_date = DateTimeProperty(default_now = True)
 	description = StringProperty(index = True , required = True)
 	#GUID generated programatically
 	ID = StringProperty(unique_index = True , required = True)
@@ -26,13 +26,14 @@ class Branch(StructuredNode):
 	#PROPERTIES	
 	
 	name = StringProperty(index = True , required = True)
-	created_date = DateProperty(required = True , default_now = True)
+	created_date = DateTimeProperty(default_now = True)
 	reason_for_branch = StringProperty(index = True , required = True)
 	ID = StringProperty(unqiue_index = True , required = True)
 
 	#RELATIONSHIPS
 	
-	initial_commit = RelationshipTo('Commit' , 'INITIAL_COMMIT' , OneOrMore)
+	initial_commit = RelationshipTo('Commit' , 'INITIAL_COMMIT' , One)
+	current_commit = RelationshipTo('Commit' , 'CURRENT_COMMIT' , One)
 
 
 
@@ -57,7 +58,7 @@ class Commit(StructuredNode):
 	#PROPERTIES
 	
 	name = StringProperty(index = True , required = True)
-	created_date = DateProperty(required = True , default_now = True)
+	created_date = DateTimeProperty(default_now = True)
 	commit_message = StringProperty(index = True , required = True)
 	ID = StringProperty(unique_index = True , required = True)
 
@@ -66,5 +67,5 @@ class Commit(StructuredNode):
 	previous_commit = RelationshipTo('Commit' , 'PREV_COMMIT' , ZeroOrMore)
 	next_commit = RelationshipTo('Commit' , 'NEXT_COMMIT' , ZeroOrMore)
 	#Child link.  Must link to a SPECIFIC COMMIT of another class.
-	child = RelationshipTo('COMMIT' , 'HAS_CHILD' , ZeroOrMore , model = ChildRelationship)
+	child = RelationshipTo('Commit' , 'HAS_CHILD' , ZeroOrMore , model = ChildRelationship)
 
