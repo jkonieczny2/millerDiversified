@@ -1,6 +1,12 @@
 from neomodel import (config, StructuredNode, StringProperty, IntegerProperty,
     UniqueIdProperty, RelationshipTo, RelationshipFrom , DateProperty , StructuredRel , DateTimeProperty)
-from neomodel.cardinality import OneOrMore , ZeroOrMore , One
+from neomodel.cardinality import (OneOrMore , ZeroOrMore , One)
+
+try:
+	from millerapp.neoRelationships import *
+except ImportError:
+	from neoRelationships import *
+
 
 class TestNode(StructuredNode):
 	code = StringProperty()
@@ -34,23 +40,8 @@ class Branch(StructuredNode):
 	
 	initial_commit = RelationshipTo('Commit' , 'INITIAL_COMMIT' , One)
 	current_commit = RelationshipTo('Commit' , 'CURRENT_COMMIT' , One)
+	head = RelationshipTo('Commit' , 'HEAD' , One , model=HEAD)
 
-
-
-#Child Relationship class.  Used to define details of a Child relationship.
-class ChildRelationship(StructuredRel):
-	relationship_name = StringProperty(required = True)
-	ID = StringProperty(required = True)
-
-	#Parent and child class names
-	parent_class_name = StringProperty()
-	child_class_name = StringProperty()
-
-	#Parent and child classes
-	parent_class = RelationshipTo('Structure' , 'CHILD_RELATIONSHIP_PARENT_CLASS' , OneOrMore)
-	child_class = RelationshipTo('Structure' , 'CHILD_RELATIONSHIP_CHILD_CLASS' , OneOrMore)
-
-	
 #Commit class.  All Branches must have at least one.
 #Stores records of all changes made to a Branch.
 #Can link to other Commits via prev_commit or next_commit
