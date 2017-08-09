@@ -1,6 +1,7 @@
 from neomodel import (config, StructuredNode, StringProperty, IntegerProperty,
     UniqueIdProperty, RelationshipTo, RelationshipFrom , DateProperty , StructuredRel , DateTimeProperty)
 from neomodel.cardinality import (OneOrMore , ZeroOrMore , One)
+from neomodel import db
 
 try:
 	from millerapp.neoRelationships import *
@@ -39,8 +40,29 @@ class Branch(StructuredNode):
 	#RELATIONSHIPS
 	
 	initial_commit = RelationshipTo('Commit' , 'INITIAL_COMMIT' , One)
-	current_commit = RelationshipTo('Commit' , 'CURRENT_COMMIT' , One)
+	commit = RelationshipTo('Commit' , 'HAS_COMMIT' , OneOrMore)
 	head = RelationshipTo('Commit' , 'HEAD' , One , model=HEAD)
+
+	#METHODS
+
+	def makeNewCommit(self , commit):
+		#Make sure the commit node is in DB
+		if commit not in Commit.nodes.all():
+			raise ValueError("Cannot create HEAD relationship to unsaved node.  Save your commit first and try again")
+			
+		#Make previous and next commit history
+		current_head = self.head.get_or_none()
+	
+		with db.transaction:
+			current_head.next_commit.connect(commit)
+			commit.previous_commit.connect(current_head)
+
+			#Reconnect HEAD
+			self.head.reconnect(old_node = current_head , new_node=commit)
+
+			#Connect new commit to the branch
+			self.commit.connect(commit)
+
 
 #Commit class.  All Branches must have at least one.
 #Stores records of all changes made to a Branch.
